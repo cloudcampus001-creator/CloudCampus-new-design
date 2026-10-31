@@ -1,113 +1,395 @@
+@import "highlight.js/styles/github-dark.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "highlight.js/styles/github-dark.css";
+
+/* ==========================================================================
+   CloudCampus — Design tokens
+   Direction: official, calm, academic. Navy ink on warm paper, hairline
+   borders, serif headings, restrained gold.
+
+   All colours are HSL channels ("H S% L%") so that Tailwind opacity modifiers
+   (bg-primary/10) work and old Android WebViews (no oklch support) render
+   correctly inside the Median APK.
+   ========================================================================== */
 
 @layer base {
   :root {
-    /* Futuristic Lightened Theme - Vibrant, Glass, Clean */
-    --background: 210 40% 96%;
-    --foreground: 222.2 84% 4.9%;
-    
-    /* Glassmorphism Card Base */
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --card-opacity: 0.7;
+    /* Typography */
+    --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, -apple-system,
+      "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-display: "Fraunces Variable", "Fraunces", ui-serif, Georgia,
+      "Times New Roman", serif;
 
+    /* Shape */
+    --radius: 0.5rem; /* 8px */
+
+    /* Layout (consumed by the app shell + chat pages) */
+    --topbar-h: 3.5rem;
+    --tabbar-h: 4.25rem;
+    --sidebar-w: 16rem;
+
+    /* Surfaces */
+    --background: 45 44% 96%;          /* paper            #FAF8F2 */
+    --foreground: 225 19% 13%;         /* ink              #1A1D26 */
+    --surface: 47 27% 93%;             /* soft panel       #F3F1EA */
+    --card: 0 0% 100%;                 /* white sheet      #FFFFFF */
+    --card-foreground: 225 19% 13%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 225 19% 13%;
 
-    --primary: 246 80% 60%; /* Electric Blue/Purple */
-    --primary-foreground: 210 40% 98%;
+    /* Brand */
+    --primary: 213 73% 16%;            /* academic navy    #0B2545 */
+    --primary-foreground: 45 44% 96%;
+    --secondary: 215 66% 22%;          /* lighter navy     #13315C */
+    --secondary-foreground: 45 44% 96%;
+    --accent: 209 32% 66%;             /* slate blue       #8DA9C4 */
+    --accent-foreground: 225 19% 13%;
 
-    --secondary: 210 40% 90%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Gold — fills, seals and borders. For TEXT use gold-ink (AA contrast). */
+    --gold: 40 57% 51%;                /*                  #C99A3A */
+    --gold-foreground: 225 19% 13%;
+    --gold-ink: 42 63% 33%;            /*                  #8A6A1F */
 
-    --muted: 210 40% 90%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Neutrals */
+    --muted: 47 20% 91%;               /*                  #EDEBE4 */
+    --muted-foreground: 217 11% 40%;   /*                  #5B6472 */
+    --border: 215 18% 87%;             /* hairline         #D7DCE3 */
+    --border-strong: 217 11% 53%;      /*                  #7A8494 */
+    --input: 215 18% 87%;
+    --ring: 215 66% 22%;
 
-    --accent: 246 80% 60%;
-    --accent-foreground: 210 40% 98%;
+    /* Status — flat "chip" system: soft tint + 1px border + dark text */
+    --destructive: 5 59% 44%;          /*                  #B23A2E */
+    --destructive-foreground: 45 44% 96%;
+    --destructive-soft: 5 55% 95%;
+    --destructive-border: 5 40% 80%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --success: 150 55% 27%;
+    --success-foreground: 45 44% 96%;
+    --success-soft: 150 38% 93%;
+    --success-border: 150 28% 78%;
 
-    --border: 214.3 31.8% 85%;
-    --input: 214.3 31.8% 85%;
-    --ring: 246 80% 60%;
+    --warning: 36 88% 27%;
+    --warning-foreground: 45 44% 96%;
+    --warning-soft: 42 78% 91%;
+    --warning-border: 40 55% 74%;
 
-    --radius: 1rem;
+    --info: 213 60% 32%;
+    --info-foreground: 45 44% 96%;
+    --info-soft: 213 42% 94%;
+    --info-border: 213 30% 80%;
+
+    /* Sidebar (navy shell) */
+    --sidebar: 213 73% 16%;
+    --sidebar-foreground: 45 30% 94%;
+    --sidebar-muted: 211 28% 72%;
+    --sidebar-primary: 40 57% 51%;
+    --sidebar-primary-foreground: 225 19% 13%;
+    --sidebar-accent: 215 66% 22%;
+    --sidebar-accent-foreground: 45 30% 96%;
+    --sidebar-border: 215 55% 25%;
+    --sidebar-ring: 40 57% 51%;
+
+    /* Charts */
+    --chart-1: 215 66% 22%;            /* navy  */
+    --chart-2: 188 40% 38%;            /* teal  */
+    --chart-3: 40 57% 51%;             /* gold  */
+    --chart-4: 12 54% 41%;             /* brick */
+    --chart-5: 140 18% 46%;            /* sage  */
+
+    /* Elevation — navy-tinted, never grey */
+    --shadow-paper: 0 1px 0 0 hsl(213 73% 16% / 0.05),
+      0 8px 24px -16px hsl(213 73% 16% / 0.18);
+    --shadow-raised: 0 1px 0 0 hsl(213 73% 16% / 0.06),
+      0 12px 32px -12px hsl(213 73% 16% / 0.22);
+    --shadow-overlay: 0 2px 8px 0 hsl(213 73% 16% / 0.08),
+      0 28px 64px -24px hsl(213 73% 16% / 0.38);
+
+    color-scheme: light;
   }
 
   .dark {
-    /* Futuristic Dark Theme - Deep Space, Neon, Sleek */
-    --background: 224 71% 4%;
-    --foreground: 210 40% 98%;
+    --background: 225 24% 9%;
+    --foreground: 45 20% 95%;
+    --surface: 225 22% 14%;
+    --card: 225 25% 12%;
+    --card-foreground: 45 20% 95%;
+    --popover: 225 25% 12%;
+    --popover-foreground: 45 20% 95%;
 
-    --card: 224 71% 6%;
-    --card-foreground: 210 40% 98%;
-    --card-opacity: 0.4;
+    --primary: 212 40% 73%;            /* light slate-blue */
+    --primary-foreground: 225 24% 9%;
+    --secondary: 215 50% 26%;
+    --secondary-foreground: 45 20% 95%;
+    --accent: 215 45% 27%;
+    --accent-foreground: 45 20% 95%;
 
-    --popover: 224 71% 4%;
-    --popover-foreground: 210 40% 98%;
+    --gold: 40 57% 51%;
+    --gold-foreground: 225 19% 13%;
+    --gold-ink: 42 62% 62%;
 
-    --primary: 263 70% 50%; /* Neon Purple */
-    --primary-foreground: 210 40% 98%;
+    --muted: 225 18% 17%;
+    --muted-foreground: 220 12% 68%;
+    --border: 222 16% 22%;
+    --border-strong: 222 12% 38%;
+    --input: 222 16% 24%;
+    --ring: 212 40% 73%;
 
-    --secondary: 215 27.9% 16.9%;
-    --secondary-foreground: 210 40% 98%;
+    --destructive: 7 60% 52%;
+    --destructive-foreground: 45 20% 97%;
+    --destructive-soft: 7 35% 14%;
+    --destructive-border: 7 30% 28%;
 
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 217.9 10.6% 64.9%;
+    --success: 150 42% 64%;
+    --success-foreground: 225 24% 9%;
+    --success-soft: 150 28% 13%;
+    --success-border: 150 24% 26%;
 
-    --accent: 263 70% 50%;
-    --accent-foreground: 210 40% 98%;
+    --warning: 40 78% 64%;
+    --warning-foreground: 225 24% 9%;
+    --warning-soft: 40 38% 13%;
+    --warning-border: 40 32% 27%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --info: 212 55% 74%;
+    --info-foreground: 225 24% 9%;
+    --info-soft: 213 35% 15%;
+    --info-border: 213 28% 30%;
 
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 263 70% 50%;
+    --sidebar: 225 30% 7%;
+    --sidebar-foreground: 45 20% 94%;
+    --sidebar-muted: 220 12% 62%;
+    --sidebar-accent: 215 40% 16%;
+    --sidebar-accent-foreground: 45 20% 96%;
+    --sidebar-border: 222 20% 16%;
+
+    --chart-1: 212 45% 66%;
+    --chart-2: 188 40% 54%;
+    --chart-3: 40 60% 58%;
+    --chart-4: 12 55% 58%;
+    --chart-5: 140 22% 58%;
+
+    --shadow-paper: 0 1px 0 0 hsl(0 0% 100% / 0.03),
+      0 8px 24px -16px hsl(0 0% 0% / 0.55);
+    --shadow-raised: 0 1px 0 0 hsl(0 0% 100% / 0.04),
+      0 12px 32px -12px hsl(0 0% 0% / 0.65);
+    --shadow-overlay: 0 2px 8px 0 hsl(0 0% 0% / 0.4),
+      0 28px 64px -24px hsl(0 0% 0% / 0.8);
+
+    color-scheme: dark;
   }
 }
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
 
 @layer base {
   * {
     @apply border-border;
   }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
   body {
-    @apply bg-background text-foreground transition-colors duration-500 selection:bg-primary selection:text-primary-foreground;
-    background-image: 
-      radial-gradient(at 0% 0%, rgba(var(--primary), 0.15) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, rgba(147, 51, 234, 0.15) 0px, transparent 50%),
-      radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
-      radial-gradient(at 0% 100%, rgba(236, 72, 153, 0.15) 0px, transparent 50%);
-    background-attachment: fixed;
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+
+  /* Display type: Fraunces, semi-bold, slightly tightened.
+     Use `font-sans` on a heading to opt out (small list titles, chat names). */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    font-optical-sizing: auto;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+
+  /* Keyboard focus — zero specificity so component classes can override */
+  :where(a, button, [role="button"], [tabindex]):focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  /* Quiet, thin scrollbars */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border-strong) / 0.45) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--border-strong) / 0.4);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--border-strong) / 0.7);
+    background-clip: content-box;
   }
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  @apply bg-transparent;
-}
-::-webkit-scrollbar-thumb {
-  @apply bg-primary/30 rounded-full hover:bg-primary/50 transition-colors;
+/* ==========================================================================
+   Components
+   ========================================================================== */
+
+@layer components {
+  /* Small uppercase label. Use where it carries information (role · class,
+     section category) — not as decoration above every heading. */
+  .eyebrow {
+    font-size: 0.72rem;
+    line-height: 1rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Hairlines */
+  .rule {
+    height: 1px;
+    border: 0;
+    background-color: hsl(var(--border));
+  }
+  .rule-strong {
+    height: 2px;
+    border: 0;
+    background-color: hsl(var(--primary));
+  }
+
+  /* The sheet: white card, hairline, whisper shadow */
+  .paper {
+    @apply bg-card text-card-foreground border border-border rounded-lg shadow-paper;
+  }
+
+  /* Numbers in tables and stats */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Safe areas (Median APK / iOS PWA). `pb-safe` is already used by GlassPopup. */
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* ------------------------------------------------------------------------
+     Legacy shims — keep unmigrated pages coherent until their phase.
+     Removed in Phase 6.
+     ------------------------------------------------------------------------ */
+  .glass {
+    @apply bg-card text-card-foreground border border-border shadow-paper;
+  }
+  .glass-hover {
+    @apply transition-[border-color,box-shadow] duration-200 hover:border-border-strong/60 hover:shadow-raised;
+  }
+  .text-glow {
+    text-shadow: none;
+  }
 }
 
-/* Glassmorphism Utilities */
-.glass {
-  @apply bg-card/60 backdrop-blur-xl border border-white/10 shadow-xl;
+/* ==========================================================================
+   Motion preferences & print
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-.glass-hover {
-  @apply hover:bg-card/80 hover:border-primary/30 hover:shadow-primary/10 hover:shadow-2xl transition-all duration-300;
+@media print {
+  :root {
+    color-scheme: light;
+  }
+  body {
+    background: #fff !important;
+  }
 }
 
-/* Neon text effect for headers */
-.text-glow {
-  text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+/* ==========================================================================
+   TEMP-COMPAT — remove in Phase 6
+   The old UI was built on dark glass (white/N overlays). On the new light
+   paper theme those overlays are invisible, so in light mode we map the
+   common ones to hairline / surface tokens. Dark mode is untouched.
+   Pages lose their dependency on this block as they are migrated.
+   ========================================================================== */
+
+/* Hairlines */
+:root:not(.dark) .border-white\/5,
+:root:not(.dark) .border-white\/6,
+:root:not(.dark) .border-white\/8,
+:root:not(.dark) .border-white\/10,
+:root:not(.dark) .border-white\/12,
+:root:not(.dark) .border-white\/15,
+:root:not(.dark) .border-white\/20 {
+  border-color: hsl(var(--border));
+}
+:root:not(.dark) .divide-white\/5 > :not([hidden]) ~ :not([hidden]),
+:root:not(.dark) .divide-white\/8 > :not([hidden]) ~ :not([hidden]),
+:root:not(.dark) .divide-white\/10 > :not([hidden]) ~ :not([hidden]) {
+  border-color: hsl(var(--border));
+}
+
+/* Fills */
+:root:not(.dark) .bg-white\/3,
+:root:not(.dark) .bg-white\/4,
+:root:not(.dark) .bg-white\/5,
+:root:not(.dark) .bg-white\/6,
+:root:not(.dark) .bg-white\/8 {
+  background-color: hsl(var(--surface));
+}
+:root:not(.dark) .bg-white\/10,
+:root:not(.dark) .bg-white\/15 {
+  background-color: hsl(var(--muted));
+}
+
+/* Hover fills (higher specificity than the base mapping above) */
+:root:not(.dark) .hover\:bg-white\/5:hover,
+:root:not(.dark) .hover\:bg-white\/8:hover,
+:root:not(.dark) .hover\:bg-white\/10:hover,
+:root:not(.dark) .hover\:bg-white\/15:hover {
+  background-color: hsl(var(--muted));
+}
+
+/* Legacy headings used font-black / font-extrabold; Fraunces looks heavy there. */
+h1.font-black,
+h2.font-black,
+h3.font-black,
+h4.font-black,
+h1.font-extrabold,
+h2.font-extrabold,
+h3.font-extrabold,
+h4.font-extrabold {
+  font-weight: 600;
 }
