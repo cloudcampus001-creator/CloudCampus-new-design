@@ -1,23 +1,28 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-export const LoadingSpinner = ({ className, size = 40, text = "Loading..." }) => {
+// A thin navy ring on a hairline track. Stroke scales with size.
+export const LoadingSpinner = ({ className, size = 32, text = "Loading..." }) => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[50vh] w-full gap-4 p-4">
-      <div 
+    <div
+      className="flex flex-col items-center justify-center min-h-[50vh] w-full gap-4 p-4"
+      role="status"
+      aria-live="polite"
+    >
+      <div
         className={cn(
-          "animate-spin rounded-full border-4 border-primary/30 border-t-primary",
+          "animate-spin rounded-full border-border border-t-primary",
           className
         )}
-        style={{ width: size, height: size }}
+        style={{ width: size, height: size, borderWidth: Math.max(2, Math.round(size / 16)) }}
       />
-      {text && <p className="text-muted-foreground text-sm font-medium animate-pulse">{text}</p>}
+      {text && <p className="text-muted-foreground text-sm font-medium">{text}</p>}
     </div>
   );
 };
 
 export const FullPageLoader = ({ text }) => (
-  <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
-    <LoadingSpinner size={60} text={text} />
+  <div className="fixed inset-0 bg-background/95 z-50 flex items-center justify-center">
+    <LoadingSpinner size={40} text={text} />
   </div>
 );
