@@ -6,12 +6,15 @@
 
 /* ==========================================================================
    CloudCampus — Design tokens
-   Direction: official, calm, academic. Navy ink on warm paper, hairline
+   Direction: official, institutional, flat. Navy ink on warm paper, hairline
    borders, serif headings, restrained gold.
 
-   All colours are HSL channels ("H S% L%") so that Tailwind opacity modifiers
-   (bg-primary/10) work and old Android WebViews (no oklch support) render
-   correctly inside the Median APK.
+   RULES
+   - Corners are square. --radius is 0 and every Tailwind radius key maps to 0.
+   - There are no shadows. Hierarchy comes from hairlines, tone (paper / white /
+     surface) and the 2px navy rule — never from depth.
+   - Colours are HSL channels ("H S% L%") so opacity modifiers work and old
+     Android WebViews (no oklch) render correctly inside the Median APK.
    ========================================================================== */
 
 @layer base {
@@ -22,8 +25,8 @@
     --font-display: "Fraunces Variable", "Fraunces", ui-serif, Georgia,
       "Times New Roman", serif;
 
-    /* Shape */
-    --radius: 0.5rem; /* 8px */
+    /* Shape: square */
+    --radius: 0rem;
 
     /* Layout (consumed by the app shell + chat pages) */
     --topbar-h: 3.5rem;
@@ -60,7 +63,7 @@
     --input: 215 18% 87%;
     --ring: 215 66% 22%;
 
-    /* Status — flat "chip" system: soft tint + 1px border + dark text */
+    /* Status — flat chip system: soft tint + 1px border + dark text */
     --destructive: 5 59% 44%;          /*                  #B23A2E */
     --destructive-foreground: 45 44% 96%;
     --destructive-soft: 5 55% 95%;
@@ -99,13 +102,10 @@
     --chart-4: 12 54% 41%;             /* brick */
     --chart-5: 140 18% 46%;            /* sage  */
 
-    /* Elevation — navy-tinted, never grey */
-    --shadow-paper: 0 1px 0 0 hsl(213 73% 16% / 0.05),
-      0 8px 24px -16px hsl(213 73% 16% / 0.18);
-    --shadow-raised: 0 1px 0 0 hsl(213 73% 16% / 0.06),
-      0 12px 32px -12px hsl(213 73% 16% / 0.22);
-    --shadow-overlay: 0 2px 8px 0 hsl(213 73% 16% / 0.08),
-      0 28px 64px -24px hsl(213 73% 16% / 0.38);
+    /* Elevation: none. Kept as tokens so `shadow-*` classes stay harmless. */
+    --shadow-paper: none;
+    --shadow-raised: none;
+    --shadow-overlay: none;
 
     color-scheme: light;
   }
@@ -170,13 +170,6 @@
     --chart-4: 12 55% 58%;
     --chart-5: 140 22% 58%;
 
-    --shadow-paper: 0 1px 0 0 hsl(0 0% 100% / 0.03),
-      0 8px 24px -16px hsl(0 0% 0% / 0.55);
-    --shadow-raised: 0 1px 0 0 hsl(0 0% 100% / 0.04),
-      0 12px 32px -12px hsl(0 0% 0% / 0.65);
-    --shadow-overlay: 0 2px 8px 0 hsl(0 0% 0% / 0.4),
-      0 28px 64px -24px hsl(0 0% 0% / 0.8);
-
     color-scheme: dark;
   }
 }
@@ -228,7 +221,7 @@
     outline-offset: 2px;
   }
 
-  /* Quiet, thin scrollbars */
+  /* Quiet, thin, square scrollbars */
   * {
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--border-strong) / 0.45) transparent;
@@ -242,7 +235,7 @@
   }
   ::-webkit-scrollbar-thumb {
     background-color: hsl(var(--border-strong) / 0.4);
-    border-radius: 9999px;
+    border-radius: 0;
     border: 2px solid transparent;
     background-clip: content-box;
   }
@@ -268,7 +261,7 @@
     color: hsl(var(--muted-foreground));
   }
 
-  /* Hairlines */
+  /* Rules */
   .rule {
     height: 1px;
     border: 0;
@@ -280,9 +273,9 @@
     background-color: hsl(var(--primary));
   }
 
-  /* The sheet: white card, hairline, whisper shadow */
+  /* The sheet: white, 1px hairline, square. */
   .paper {
-    @apply bg-card text-card-foreground border border-border rounded-lg shadow-paper;
+    @apply bg-card text-card-foreground border border-border;
   }
 
   /* Numbers in tables and stats */
@@ -303,10 +296,10 @@
      Removed in Phase 6.
      ------------------------------------------------------------------------ */
   .glass {
-    @apply bg-card text-card-foreground border border-border shadow-paper;
+    @apply bg-card text-card-foreground border border-border;
   }
   .glass-hover {
-    @apply transition-[border-color,box-shadow] duration-200 hover:border-border-strong/60 hover:shadow-raised;
+    @apply transition-[border-color] duration-150 hover:border-border-strong;
   }
   .text-glow {
     text-shadow: none;
@@ -339,11 +332,20 @@
 
 /* ==========================================================================
    TEMP-COMPAT — remove in Phase 6
-   The old UI was built on dark glass (white/N overlays). On the new light
-   paper theme those overlays are invisible, so in light mode we map the
-   common ones to hairline / surface tokens. Dark mode is untouched.
-   Pages lose their dependency on this block as they are migrated.
+   The old UI was built on dark glass with glows. Until each page is migrated:
+   - white/N overlays (invisible on paper) map to hairline / surface tokens
+     in light mode (dark mode is untouched);
+   - inline `style={{ boxShadow }}` and `style={{ borderRadius }}` are neutralised.
+   Focus rings are NOT affected (Tailwind rings are class-based, not inline).
    ========================================================================== */
+
+/* Inline glows and curves */
+[style*="box-shadow"] {
+  box-shadow: none !important;
+}
+[style*="border-radius"] {
+  border-radius: 0 !important;
+}
 
 /* Hairlines */
 :root:not(.dark) .border-white\/5,
