@@ -34,6 +34,35 @@ module.exports = {
 				'2xl': '1152px',
 			},
 		},
+
+		// ── Flat system: no shadows anywhere ────────────────────────────────────
+		// Overriding (not extending) the scale means shadow-lg, shadow-xl,
+		// shadow-2xl and coloured variants like shadow-indigo-500/30 all resolve
+		// to nothing. Hierarchy comes from hairlines, tone and rules.
+		// (Focus rings use `ring-*`, which is separate and unaffected.)
+		boxShadow: {
+			DEFAULT: 'none',
+			sm: 'none',
+			md: 'none',
+			lg: 'none',
+			xl: 'none',
+			'2xl': 'none',
+			inner: 'none',
+			none: 'none',
+			paper: 'none',
+			raised: 'none',
+			overlay: 'none',
+		},
+		dropShadow: {
+			DEFAULT: 'none',
+			sm: 'none',
+			md: 'none',
+			lg: 'none',
+			xl: 'none',
+			'2xl': 'none',
+			none: 'none',
+		},
+
 		extend: {
 			fontFamily: {
 				sans: ['var(--font-sans)'],
@@ -103,22 +132,24 @@ module.exports = {
 					5: c('chart-5'),
 				},
 			},
-			// Scale: sm 4 · md 6 · lg 8 · xl 10 · 2xl 12 · 3xl 16.
-			// Legacy pages use rounded-2xl/3xl for cards and sheets; remapping the
-			// scale here calms every unmigrated screen immediately.
+
+			// ── Square system: every radius key resolves to 0 ───────────────────
+			// This includes `full`, so legacy pills and circles (rounded-full) square
+			// up on every unmigrated page. Components keep their `rounded-*` classes
+			// as semantic hooks; the token decides the value. For the rare true
+			// circle (the loading spinner) use the arbitrary value `rounded-[50%]`.
 			borderRadius: {
-				sm: 'calc(var(--radius) - 4px)',
-				md: 'calc(var(--radius) - 2px)',
-				lg: 'var(--radius)',
-				xl: 'calc(var(--radius) + 2px)',
-				'2xl': 'calc(var(--radius) + 4px)',
-				'3xl': 'calc(var(--radius) + 8px)',
+				none: '0px',
+				sm: '0px',
+				DEFAULT: '0px',
+				md: '0px',
+				lg: '0px',
+				xl: '0px',
+				'2xl': '0px',
+				'3xl': '0px',
+				full: '0px',
 			},
-			boxShadow: {
-				paper: 'var(--shadow-paper)',
-				raised: 'var(--shadow-raised)',
-				overlay: 'var(--shadow-overlay)',
-			},
+
 			transitionTimingFunction: {
 				// Gentle deceleration — "turning a page", no bounce.
 				page: 'cubic-bezier(0.25, 1, 0.5, 1)',

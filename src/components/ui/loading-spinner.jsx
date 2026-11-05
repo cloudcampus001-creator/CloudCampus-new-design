@@ -2,6 +2,8 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 
 // A thin navy ring on a hairline track. Stroke scales with size.
+// `rounded-[50%]` is the one deliberate circle in the system: the radius tokens
+// are all 0, and a square spinner reads as a rendering glitch.
 export const LoadingSpinner = ({ className, size = 32, text = "Loading..." }) => {
   return (
     <div
@@ -11,7 +13,7 @@ export const LoadingSpinner = ({ className, size = 32, text = "Loading..." }) =>
     >
       <div
         className={cn(
-          "animate-spin rounded-full border-border border-t-primary",
+          "animate-spin rounded-[50%] border-border border-t-primary",
           className
         )}
         style={{ width: size, height: size, borderWidth: Math.max(2, Math.round(size / 16)) }}
